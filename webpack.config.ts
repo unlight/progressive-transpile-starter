@@ -8,12 +8,13 @@ process['traceDeprecation'] = true;
 
 module.exports = (options: any = {}) => {
     const config1: Configuration = {
-        mode: 'production',
-        entry: './src/index.ts',
+        // mode: 'production',
+        mode: 'development',
+        entry: './src/app.ts',
         devtool: false,
         output: {
             path: resolve('dist'),
-            filename: 'app.es5.cjs.js',
+            filename: 'app.es5.js',
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -28,6 +29,11 @@ module.exports = (options: any = {}) => {
                     test: /\.html$/,
                     use: [loader('html', { minimize: false })],
                 },
+                {
+                    test: /es2015\.testjs$/,
+                    use: [loader('raw')],
+                },
+
             ]
         },
         stats: {
@@ -38,6 +44,12 @@ module.exports = (options: any = {}) => {
         },
 
     };
+    const mainConfig: Configuration = merge({}, config1, {
+        entry: './src/main.ts',
+        output: {
+            filename: 'main.js',
+        },
+    });
     const config2: Configuration = merge({}, config1, {
         output: {
             filename: 'app.es2015.js',
@@ -64,7 +76,12 @@ module.exports = (options: any = {}) => {
             ]
         },
     });
-    return [config1, config2, config3];
+    return [
+        mainConfig,
+        config1,
+        config2,
+        // config3,
+    ];
 };
 
 function tsLoader({ target = 'es5', module = 'commonjs' } = {}) {
