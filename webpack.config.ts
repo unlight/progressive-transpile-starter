@@ -2,23 +2,31 @@ import * as fs from 'fs';
 import { resolve } from 'path';
 import { loader } from 'webpack-loader-helper';
 import { Configuration } from 'webpack';
+import merge = require('lodash.merge');
 
 process['traceDeprecation'] = true;
 
-export = (options: any = {}) => {
+module.exports = (options: any = {}) => {
     const config1: Configuration = {
         mode: 'production',
         entry: './src/index.ts',
         devtool: false,
         output: {
             path: resolve('dist'),
-            filename: 'app.es5.js',
+            filename: 'app.es5.cjs.js',
+        },
+        resolve: {
+            extensions: ['.ts', '.tsx', '.js', '.jsx'],
         },
         module: {
             rules: [
                 {
                     test: /.tsx?$/,
-                    use: [tsLoader('es5')],
+                    use: [tsLoader({ target: 'es5', module: 'commonjs' })],
+                },
+                {
+                    test: /\.html$/,
+                    use: [loader('html', { minimize: false })],
                 },
             ]
         },
@@ -30,44 +38,40 @@ export = (options: any = {}) => {
         },
 
     };
-    const config2: Configuration = {
-        ...config1,
+    const config2: Configuration = merge({}, config1, {
         output: {
-            path: resolve('dist'),
             filename: 'app.es2015.js',
         },
         module: {
             rules: [
                 {
                     test: /.tsx?$/,
-                    use: [tsLoader('es2015')],
+                    use: [tsLoader({ target: 'es2015', module: 'es2015' })],
                 },
             ]
         },
-    };
-    const config3: Configuration = {
-        ...config2,
+    });
+    const config3: Configuration = merge({}, config1, {
         output: {
-            path: resolve('dist'),
             filename: 'app.es2017.js',
         },
         module: {
             rules: [
                 {
                     test: /.tsx?$/,
-                    use: [tsLoader('es2017')],
+                    use: [tsLoader({ target: 'es2017', module: 'es2015' })],
                 },
             ]
         },
-    };
+    });
     return [config1, config2, config3];
 };
 
-function tsLoader(target = 'es5') {
+function tsLoader({ target = 'es5', module = 'commonjs' } = {}) {
     return loader('ts', {
         transpileOnly: true,
         compilerOptions: {
-            target
+            target, module
         }
     })
 }

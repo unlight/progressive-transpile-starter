@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash.merge": "4.6.3",
     "@types/node": "10.1.2",
     "@types/webpack": "4.4.0",
+    "html-loader": "0.5.5",
+    "lodash.merge": "4.6.1",
     "ts-loader": "4.3.0",
     "ts-node": "6.0.3",
     "typescript": "2.8.3",
