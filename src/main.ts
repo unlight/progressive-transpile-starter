@@ -1,9 +1,7 @@
-const loadScript = require('load-script2');
-const esTest = require('./es-test');
+import { testEsVersion } from './es-test';
+import loadScript = require('load-script2');
 
-console.log('esTest', esTest);
-
-loadScript(`app.es${esTest}.js`, (err, script) => {
+loadScript(`app.es${testEsVersion()}.js`, (err, script) => {
     if (err) {
         throw err;
     }
